@@ -39,7 +39,9 @@ export function readLocailzationFile(path, callback) {
 
 export function generateTranslatedFile(originalPath, translations, target) {
     const dateString = new Date().toISOString().slice(0, 16)
-    !fs.existsSync(dateString) && fs.mkdirSync(dateString)
+    const dir = `xcode_${dateString}`
+    !fs.existsSync(dir) && fs.mkdirSync(dir)
+
     readLocailzationFile(originalPath, (data) => {
         const array = data.split("\n\n")
         const comments = []
@@ -64,7 +66,7 @@ export function generateTranslatedFile(originalPath, translations, target) {
         stringValue = stringValue.replace(/,/g, "")
         stringValue = stringValue.replace(/％/g, "%")
 
-        const stringPath = `./${dateString}/${target}.text`
+        const stringPath = `./${dir}/${target}.strings`
         fs.writeFile(stringPath, stringValue, "utf-8", (err) => {
             if (err) {
                 console.log(err)
@@ -77,19 +79,18 @@ export function generateTranslatedFile(originalPath, translations, target) {
 
 export async function jsonGenerateTranslatedFile(originalPath, targets, translateText) {
     const dateString = new Date().toISOString().slice(0, 16)
-    !fs.existsSync(dateString) && fs.mkdirSync(dateString)
+    const dir = `JSON_${dateString}`
+    !fs.existsSync(dir) && fs.mkdirSync(dir)
 
     readLocailzationFile(originalPath, async (data) => {
         try {
-            const obj = JSON.parse(data)
-            const translations = Object.keys(obj)
-            
+            const strings = Object.keys(obj)
             for (const target of targets) {
-                const stringPath = `./${dateString}/${target}.text`
-                const translated = await translateText(translations, target)
+                const stringPath = `./${dir}/${target}.json`
+                const translated = await translateText(strings, target)
 
                 const newObj = {}
-                translations.forEach((value, i) => {
+                strings.forEach((value, i) => {
                     newObj[value] = translated[i]
                 })
 
@@ -105,4 +106,17 @@ export async function jsonGenerateTranslatedFile(originalPath, targets, translat
             console.log(e)
         }
     })
+}
+
+export async function translateXcodeLocalizable(path, targets, translateText) {
+    const texts = await writeLocalizationKeys(path, "./en.json")
+
+    for (const target of targets) {
+        const translations = []
+        for (const text of texts) {
+            const translation = await translateText(text, target)
+            translations.push(translation)
+        }
+        generateTranslatedFile(path, translations, target)
+    }
 }
