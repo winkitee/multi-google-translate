@@ -1,0 +1,7 @@
+/node_modules
+/temp
+/key
+
+en.json
+en.text
+package-lock.json

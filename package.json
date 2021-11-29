@@ -1,0 +1,17 @@
+{
+  "name": "multi-google-translate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "GOOGLE_APPLICATION_CREDENTIALS=\"/Users/winkitee/Dev/keys/my-vpn-312611-cac06a70229e.json\" node --experimental-json-modules index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/translate": "^6.3.1",
+    "node-fetch": "^3.0.0"
+  }
+}
