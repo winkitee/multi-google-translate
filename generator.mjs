@@ -74,3 +74,35 @@ export function generateTranslatedFile(originalPath, translations, target) {
         })
     })
 }
+
+export async function jsonGenerateTranslatedFile(originalPath, targets, translateText) {
+    const dateString = new Date().toISOString().slice(0, 16)
+    !fs.existsSync(dateString) && fs.mkdirSync(dateString)
+
+    readLocailzationFile(originalPath, async (data) => {
+        try {
+            const obj = JSON.parse(data)
+            const translations = Object.keys(obj)
+            
+            for (const target of targets) {
+                const stringPath = `./${dateString}/${target}.text`
+                const translated = await translateText(translations, target)
+
+                const newObj = {}
+                translations.forEach((value, i) => {
+                    newObj[value] = translated[i]
+                })
+
+                fs.writeFile(stringPath, JSON.stringify(newObj, null, 2), "utf-8", (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(`success: ${stringPath}`)
+                    }
+                })
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    })
+}
