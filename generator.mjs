@@ -61,9 +61,9 @@ export function generateTranslatedFile(originalPath, translations, target) {
             stringArray.push("\n\n")
         })
 
-        let stringValue = stringArray.join()
+        let stringValue = stringArray.join("###")
 
-        stringValue = stringValue.replace(/,/g, "")
+        stringValue = stringValue.replace(/###/g, "")
         stringValue = stringValue.replace(/％/g, "%")
 
         const stringPath = `./${dir}/${target}.strings`
